@@ -36,7 +36,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [list acquisitions](#action-list-acquisitions) - Retrieve a list of all acquisitions with optional filters \
 [start acquisition](#action-start-acquisition) - Request a file to be acquired into FireEye HX \
 [get file](#action-get-file) - Pull the acquired file into Phantom Vault \
-[get alert](#action-get-alert) - Pull single alert info by ID
+[get alert](#action-get-alert) - Pull single alert info by ID \
+[get agent id by hostname](#action-get-agent-id-by-hostname) - Retrieve the FireEye HX agent ID using the hostname
 
 ## action: 'test connectivity'
 
@@ -651,6 +652,36 @@ action_result.data.\*.source | string | | |
 action_result.status | string | | success failed |
 action_result.message | string | | |
 action_result.summary | string | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
+
+## action: 'get agent id by hostname'
+
+Retrieve the FireEye HX agent ID using the hostname
+
+Type: **investigate** \
+Read only: **True**
+
+This action searches for an endpoint by hostname and returns the corresponding FireEye HX agent ID. The search is case-insensitive for hostname matching.
+
+#### Action Parameters
+
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**hostname** | required | Hostname of the endpoint to search for | string | `host name` |
+
+#### Action Output
+
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.parameter.hostname | string | `host name` | random_565_4 |
+action_result.data.\*.hostname | string | `host name` | random_565_4 |
+action_result.data.\*.agent_id | string | `fireeyehx agentid` | 3805951439869103977B58 |
+action_result.data.\*.host | object | | { Full host object from HX API } |
+action_result.status | string | | success failed |
+action_result.message | string | | Host found, Host not found: {hostname} |
+action_result.summary.hostname | string | `host name` | random_565_4 |
+action_result.summary.agent_id | string | `fireeyehx agentid` | 3805951439869103977B58 |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
