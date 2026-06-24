@@ -2882,7 +2882,39 @@
                 "type": "table"
             },
             "versions": "EQ(*)"
-        }
+        },
+        {
+  "action": "get agent id by hostname",
+  "identifier": "get_agent_id_by_hostname",
+  "description": "Find HX Agent ID from hostname",
+  "type": "investigate",
+  "read_only": true,
+  "parameters": {
+    "hostname": {
+      "description": "Endpoint hostname",
+      "data_type": "string",
+      "required": true,
+      "primary": true,
+      "contains": ["host name"],
+      "order": 0
+    }
+  },
+  "output": [
+    {
+      "data_path": "action_result.data.*.hostname",
+      "data_type": "string"
+    },
+    {
+      "data_path": "action_result.data.*.agent_id",
+      "data_type": "string",
+      "contains": ["fireeyehx agentid"]
+    }
+  ],
+  "render": {
+    "type": "table"
+  },
+  "versions": "EQ(*)"
+}
     ],
     "pip39_dependencies": {
         "wheel": [
