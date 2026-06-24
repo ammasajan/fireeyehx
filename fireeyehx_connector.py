@@ -1135,6 +1135,8 @@ class FireeyeHxConnector(BaseConnector):
 
         elif action_id == "get_alert":
             ret_val = self._handle_get_alert(param)
+        elif action_id == "get_agent_id_by_hostname":
+            ret_val = self._handle_get_agent_id_by_hostname(param)
 
         return ret_val
 
