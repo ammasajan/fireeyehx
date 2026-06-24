@@ -773,71 +773,72 @@ class FireeyeHxConnector(BaseConnector):
         summary["message"] = sum_message
 
         return action_result.set_status(phantom.APP_SUCCESS)
-    # custom function to fetch agent ID by hostname...
+
     def _handle_get_agent_id_by_hostname(self, param):
+        """Custom function to fetch agent ID by hostname."""
+        action_result = self.add_action_result(ActionResult(dict(param)))
 
-    action_result = self.add_action_result(ActionResult(dict(param)))
+        hostname = param.get("hostname")
 
-    hostname = param.get("hostname")
-
-    if not hostname:
-        return action_result.set_status(
-            phantom.APP_ERROR,
-            "hostname parameter is required"
-        )
-
-    ret_val, token = self.hx_auth_make_rest_call(
-        "/hx/api/v3/token",
-        action_result
-    )
-
-    if phantom.is_fail(ret_val):
-        return action_result.get_status()
-
-    headers = {
-        "x-feapi-token": token,
-        "Accept": "application/json"
-    }
-
-    params = {
-        "search": hostname
-    }
-
-    ret_val, response = self._make_rest_call(
-        "/hx/api/v3/hosts",
-        action_result,
-        params=params,
-        headers=headers,
-        method="get"
-    )
-
-    if phantom.is_fail(ret_val):
-        return action_result.get_status()
-
-    entries = response.get("data", {}).get("entries", [])
-
-    for host in entries:
-        if host.get("hostname", "").lower() == hostname.lower():
-
-            action_result.add_data({
-                "hostname": hostname,
-                "agent_id": host.get("_id"),
-                "host": host
-            })
-
-            summary = action_result.update_summary({})
-            summary["hostname"] = hostname
-            summary["agent_id"] = host.get("_id")
-
+        if not hostname:
             return action_result.set_status(
-                phantom.APP_SUCCESS,
-                "Host found"
+                phantom.APP_ERROR,
+                "hostname parameter is required"
             )
 
-    return action_result.set_status(
-        phantom.APP_ERROR,
-        f"Host not found: {hostname}"
-    )
+        ret_val, token = self.hx_auth_make_rest_call(
+            "/hx/api/v3/token",
+            action_result
+        )
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        headers = {
+            "x-feapi-token": token,
+            "Accept": "application/json"
+        }
+
+        params = {
+            "search": hostname
+        }
+
+        ret_val, response = self._make_rest_call(
+            "/hx/api/v3/hosts",
+            action_result,
+            params=params,
+            headers=headers,
+            method="get"
+        )
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        entries = response.get("data", {}).get("entries", [])
+
+        for host in entries:
+            if host.get("hostname", "").lower() == hostname.lower():
+
+                action_result.add_data({
+                    "hostname": hostname,
+                    "agent_id": host.get("_id"),
+                    "host": host
+                })
+
+                summary = action_result.update_summary({})
+                summary["hostname"] = hostname
+                summary["agent_id"] = host.get("_id")
+
+                return action_result.set_status(
+                    phantom.APP_SUCCESS,
+                    "Host found"
+                )
+
+        return action_result.set_status(
+            phantom.APP_ERROR,
+            f"Host not found: {hostname}"
+        )
+
     def _handle_get_quarantine_status(self, param):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
@@ -1135,6 +1136,7 @@ class FireeyeHxConnector(BaseConnector):
 
         elif action_id == "get_alert":
             ret_val = self._handle_get_alert(param)
+
         elif action_id == "get_agent_id_by_hostname":
             ret_val = self._handle_get_agent_id_by_hostname(param)
 
